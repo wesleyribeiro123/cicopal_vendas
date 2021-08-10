@@ -1,2 +1,2 @@
 # cicopal_vendas
-Acompanhamento da importação de pedidos para o Protheus
+Acompanhamento da importação de pedidos com erro para o Protheus
