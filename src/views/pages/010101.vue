@@ -8,7 +8,7 @@
 
       <!-- DatePicker -->
       <div class="q-mt-lg q-mb-md">
-        <q-input outlined dense v-model="reportDate">
+        <q-input outlined dense v-model="reportDate" @keypress.enter="refreshDate">
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
@@ -27,7 +27,7 @@
                       v-close-popup
                       label="Confirmar"
                       color="positive"
-                      @click="refreshDate()"
+                      @click="refreshDate"
                     />
                   </div>
                 </q-date>
@@ -46,6 +46,7 @@
         :columns="colsError"
         :filter="filterError"
         :rows-per-page-options="[10]"
+        :visible-columns="visibleCols"
         row-key="orderCode"
         color="negative"
         v-model="selected"
@@ -62,21 +63,20 @@
         </div>
         <div class="row justify-center">
           <q-btn
-            class="q-mr-md q-px-lg"
-            label="Ocultar Erro"
-            color="negative"
-            outline
-            dense
-            @click="hiddenError"
-          />
-
-          <q-btn
             class="q-ml-md q-px-lg"
-            label="Confirmar Correção"
+            label="Solicitar Reimportação"
             color="positive"
             outline
             dense
             @click="adjustedError"
+          />
+          <q-btn
+            class="q-ml-md q-px-lg"
+            label="Fechar"
+            color="negative"
+            outline
+            dense
+            @click="closedError"
           />
         </div>
       </div>
@@ -88,7 +88,10 @@
 import { ref } from 'vue'
 import DataTable from '../../components/DataTable'
 import locale from 'quasar/lang/pt-BR'
-import formatDate from '../../helpers/functions'
+import formatDate from '../../helpers/formatDate'
+import dateToString from '../../helpers/dateToString'
+import stringToDate from '../../helpers/stringToDate'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
@@ -103,6 +106,7 @@ export default {
     return {
       rowSelected: null,
       dErrors: false,
+      filterError: null,
       ptBR: locale.date,
       reportDate: formatDate(Date.now()),
       colsError: [
@@ -115,45 +119,106 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
+        { name: 'id'        ,align: 'left', label: 'ID'           ,field: 'id'        ,sortable: false},
         { name: 'branch'    ,align: 'left', label: 'Filial'       ,field: 'branch'    ,sortable: true },
         { name: 'clientC'   ,align: 'left', label: 'Código'       ,field: 'clientC'   ,sortable: true },
         { name: 'clientL'   ,align: 'left', label: 'Loja'         ,field: 'clientL'   ,sortable: true },
+        { name: 'valueTTL'  ,align: 'left', label: 'Valor Total'  ,field: 'valueTTL'  ,sortable: true },
         { name: 'issueDate' ,align: 'left', label: 'Dt Emissão'   ,field: 'issueDate' ,sortable: true },
         { name: 'issueHour' ,align: 'left', label: 'Hora Emissão' ,field: 'issueHour' ,sortable: true },
       ],
-      rowsError: [
-        { branch: '010101' ,clientC: '37223634' ,clientL: '0001' ,orderCode: '01010168087186' ,issueDate: '20210723' ,issueHour: '08:35' },
-        { branch: '010101' ,clientC: '28769286' ,clientL: '0001' ,orderCode: '01010368095942' ,issueDate: '20210723' ,issueHour: '11:31' },
-        { branch: '010101' ,clientC: '09348928' ,clientL: '0001' ,orderCode: '06010268091531' ,issueDate: '20210723' ,issueHour: '15:25' },
-        { branch: '010101' ,clientC: '31676385' ,clientL: '0001' ,orderCode: '06010268109676' ,issueDate: '20210723' ,issueHour: '15:25' },
-        { branch: '010101' ,clientC: '53427807' ,clientL: '649 ' ,orderCode: '01010368109479' ,issueDate: '20210723' ,issueHour: '15:33' },
-        { branch: '010101' ,clientC: '53427807' ,clientL: '649 ' ,orderCode: '01010368109481' ,issueDate: '20210723' ,issueHour: '15:33' },
-        { branch: '010101' ,clientC: '35416260' ,clientL: '0001' ,orderCode: '01010368109863' ,issueDate: '20210723' ,issueHour: '15:33' },
-        { branch: '010101' ,clientC: '37223634' ,clientL: '0001' ,orderCode: '01010168087186' ,issueDate: '20210723' ,issueHour: '08:35' },
-        { branch: '010101' ,clientC: '28769286' ,clientL: '0001' ,orderCode: '01010368095942' ,issueDate: '20210723' ,issueHour: '11:31' },
-        { branch: '010101' ,clientC: '09348928' ,clientL: '0001' ,orderCode: '06010268091531' ,issueDate: '20210723' ,issueHour: '15:25' },
-        { branch: '010101' ,clientC: '31676385' ,clientL: '0001' ,orderCode: '06010268109676' ,issueDate: '20210723' ,issueHour: '15:25' },
-        { branch: '010101' ,clientC: '53427807' ,clientL: '649 ' ,orderCode: '01010368109479' ,issueDate: '20210723' ,issueHour: '15:33' },
-        { branch: '010101' ,clientC: '53427807' ,clientL: '649 ' ,orderCode: '01010368109481' ,issueDate: '20210723' ,issueHour: '15:33' },
-        { branch: '010101' ,clientC: '35416260' ,clientL: '0001' ,orderCode: '01010368109863' ,issueDate: '20210723' ,issueHour: '15:33' },
-        { branch: '010101' ,clientC: '28769286' ,clientL: '0001' ,orderCode: '01010368095942' ,issueDate: '20210723' ,issueHour: '11:31' },
-        { branch: '010101' ,clientC: '09348928' ,clientL: '0001' ,orderCode: '06010268091531' ,issueDate: '20210723' ,issueHour: '15:25' },
-        { branch: '010101' ,clientC: '31676385' ,clientL: '0001' ,orderCode: '06010268109676' ,issueDate: '20210723' ,issueHour: '15:25' },
-        { branch: '010101' ,clientC: '53427807' ,clientL: '649 ' ,orderCode: '01010368109479' ,issueDate: '20210723' ,issueHour: '15:33' },
-        { branch: '010101' ,clientC: '53427807' ,clientL: '649 ' ,orderCode: '01010368109481' ,issueDate: '20210723' ,issueHour: '15:33' },
-        { branch: '010101' ,clientC: '35416260' ,clientL: '0001' ,orderCode: '01010368109863' ,issueDate: '20210723' ,issueHour: '15:33' },
-      ],
+      visibleCols: [
+        'orderCode', 'branch', 'clientC', 'clientL',
+        'valueTTL', 'issueDate', 'issueHour'
+      ]
+    }
+  },
+  computed: {
+    ...mapState("ordersWithErrors", ["orders"]),
+    rowsError() {
+      let orders = this.orders
+
+      return orders.map(order => {
+        return {
+          id: order.id,
+          branch: order.branchCode,
+          clientC: order.clientCode,
+          clientL: order.clientStore,
+          valueTTL: order.amount,
+          orderCode: order.orderCode,
+          issueDate: stringToDate(order.issueDate),
+          issueHour: order.issueHour
+        }
+      })
     }
   },
   methods: {
+    ...mapActions("ordersWithErrors", [
+      "getOrders",
+      "errorFinished"
+    ]),
+    ...mapMutations("shared", ["setNotification"]),
+    refreshDate() {
+      const date = dateToString(this.reportDate);
+      const branchCode = String(this.$route.path).substr(1);
+      
+      this.getOrders({ branchCode, date });
+    },
     onErrorsClick(event, row) {
       this.rowSelected = row;
       this.dErrors = true;
+
+      // Verificar como será o arquivo BLOB,vai subir na mesma Collection ou
+      // criaremos outra amarrando pelo número do pedido?
     },
+    closedError() {
+      this.dErrors = false;
+    },
+    adjustedError() {
+      this.sendResponse(this.rowSelected, 'reimportar');
+    },
+    sendResponse(row, response) {
+      this.$q.dialog({
+        title: 'Confirmação',
+        message: `Deseja realmente liberar para reimportação o pedido nº: ${row.orderCode}?`,
+        ok: {
+          push: true,
+          color: 'green',
+          label: 'Sim'
+        },
+        cancel: {
+          push: true,
+          color: 'red',
+          label: 'Não'
+        },
+        persistent: true
+      })
+      .onOk(async() => {
+        try {
+          let id = row.id;
+          await this.errorFinished({ id, response });
+          this.setNotification({
+            message: 'Resposta enviada com sucesso.',
+            color: 'green',
+            position: 'top'
+          });
+          this.dErrors = false;
+          this.refreshDate();
+        } catch (e) {
+          this.setNotification({
+            message: e.message,
+            color: 'red',
+            position: 'top'
+          });
+        }
+      })
+    }
+  },
+  async created() {
+    const date = dateToString(this.reportDate);
+    const branchCode = String(this.$route.path).substr(1);
+
+    await this.getOrders({ branchCode, date });
   }
 }
 </script>
-
-<style lang="scss">
-
-</style>

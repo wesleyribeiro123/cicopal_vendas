@@ -1,12 +1,13 @@
 import { createStore } from 'vuex'
+import shared from './modules/shared'
+import ordersWithErrors from './modules/ordersWithErrors'
+
+const modules = {
+  shared,
+  ordersWithErrors
+}
 
 export default createStore({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
+  strict: false,
+  modules: modules
 })

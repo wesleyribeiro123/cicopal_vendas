@@ -9,14 +9,13 @@
   >
 
     <q-splitter
-      v-model="splitterModel"
-      horizontal
-      disable
+      v-model="heightSplitter"
+      :horizontal="true"
+      :disable="true"
       style="
         height: calc(100% - 160px);
         width: 290px;
-        margin-top: 90px;
-      "
+        margin-top: 90px;"
     >
 
       <template v-slot:before>
@@ -31,6 +30,7 @@
           />
         </div>
       </template>
+
     </q-splitter>
 
     <div class="absolute-top" style="background-color: #e0e7f1; height: 90px">
@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       drawer: true,
-      splitterModel: true,
+      heightSplitter: 100,
       selected: null,
       branchName: null,
       branchs: [

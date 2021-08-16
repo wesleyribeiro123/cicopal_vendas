@@ -6,6 +6,7 @@
     :row-key="row-key"
     :color="color"
     :filter="filter"
+    :visible-columns="visible-columns"
     :rows-per-page-options="rows-per-page-options"
     :v-model:selected="v-model"
   >

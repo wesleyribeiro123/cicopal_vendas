@@ -10,6 +10,11 @@ const routes = [
     path: '/010101',
     name: 'Cicopal Matriz',
     component: () => import('../views/pages/010101.vue')
+  },
+  {
+    path: '/010105',
+    name: 'Cicopal Marabá',
+    component: () => import('../views/pages/010105.vue')
   }
 ]
 
