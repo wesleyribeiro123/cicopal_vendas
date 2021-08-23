@@ -22,7 +22,7 @@ export async function getOrders({ commit }, infos) {
       .collection('ordersWithErrors')
       .where('branchCode', '==', branchCode)
       .where('issueDate', '==', issueDate)
-      .where('status', '==', 'pending')
+      .where('status', '==', 'PENDENTE')
       .get()
 
     snapshot.forEach(doc => {
@@ -103,7 +103,7 @@ export async function errorFinished({ commit }, payload) {
       .doc(id)
       .get()
       .then(doc => doc.data());
-    orderFB.status = 'adjusted';
+    orderFB.status = 'AJUSTADO';
 
     const batch = db.batch();
     const setRef = db.collection('ordersWithErrors').doc(id);

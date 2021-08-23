@@ -35,7 +35,7 @@ async function setData() {
         },
       },
       responsible: "PORTAL CICOPAL",
-      status: "pendente"
+      status: "PENDENTE"
     });
 
   } catch (e) {
