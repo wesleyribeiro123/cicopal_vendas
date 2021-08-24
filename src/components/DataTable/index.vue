@@ -9,6 +9,10 @@
     :visible-columns="visible-columns"
     :rows-per-page-options="rows-per-page-options"
     :v-model:selected="v-model"
+    :flat="flat"
+    :hide-header="hide-header"
+    :hide-pagination="hide-pagination"
+    no-data-label="Sem dados para serem exibidos..."
   >
   
     <template v-slot:top-right>

@@ -54,14 +54,47 @@
       />
     </div>
 
-    <q-dialog v-model="dErrors">
-      <div class="bg-white q-ma-xl q-pa-xl row justify-center">
-        <div class="column">
-          <p>Você clicou no pedido: {{ rowSelected ? rowSelected.orderCode : '???' }}</p>
-          <br>
-          <h6>MOSTRAR O ARQUIVO BLOB</h6>
+    <q-dialog v-model="dErrors" full-width >
+      <div class="bg-white q-ma-xl q-pa-md col justify-center">
+        <div class="col">
+          <q-scroll-area style="width: 100%; height: 480px;">
+            <div class="text-h6 text-center">
+              Detalhamento do Erro
+            </div>
+            <br>
+            <!-- Dados sobre o Cliente -->
+            <div class="text-subtitle2">Dados do Pedido:</div>
+            <q-table
+              :filter="rowSelected.orderCode"
+              :rows="rowsError"
+              :columns="colsDetail"
+              :rows-per-page-options="[5]"
+              :visible-columns="visibleColsDetail"
+              dense
+              flat
+              hide-pagination
+              row-key="orderCode"
+              color="negative"
+            />
+
+            <!-- Dados sobre os produtos -->
+            <div class="text-subtitle2 q-mt-md">Detalhes dos Produtos:</div>
+            <q-table
+              :rows="detailOrder"
+              :columns="colsProducts"
+              :rows-per-page-options="[3]"
+              color="negative"
+              dense
+              flat
+            />
+
+            <div class="text-subtitle2 q-mt-md">Mensagem de Erro:</div>
+            <div class="erroBLOB">
+              {{ rowSelected.erroBLOB }}
+            </div>
+          </q-scroll-area>
         </div>
-        <div class="row justify-center">
+        <div class="row justify-center q-mt-xs">
           <q-btn
             class="q-ml-md q-px-lg"
             label="Solicitar Reimportação"
@@ -127,9 +160,44 @@ export default {
         { name: 'issueDate' ,align: 'left', label: 'Dt Emissão'   ,field: 'issueDate' ,sortable: true },
         { name: 'issueHour' ,align: 'left', label: 'Hora Emissão' ,field: 'issueHour' ,sortable: true },
       ],
+      colsDetail: [
+        {
+          name: 'orderCode',
+          required: true,
+          label: 'Número do Pedido',
+          align: 'left',
+          field: row => row.orderCode,
+          format: val => `${val}`,
+          sortable: true
+        },
+        { name: 'clientC'     ,align: 'left', label: 'Código'         ,field: 'clientC'     ,sortable: true },
+        { name: 'clientL'     ,align: 'left', label: 'Loja'           ,field: 'clientL'     ,sortable: true },
+        { name: 'fantasy'     ,align: 'left', label: 'Nome Fantasia'  ,field: 'fantasy'     ,sortable: true },
+        { name: 'valueTTL'    ,align: 'left', label: 'Valor Total'    ,field: 'valueTTL'    ,sortable: true },
+        { name: 'issueDate'   ,align: 'left', label: 'Dt Emissão'     ,field: 'issueDate'   ,sortable: true },
+        { name: 'issueHour'   ,align: 'left', label: 'Hora Emissão'   ,field: 'issueHour'   ,sortable: true },
+      ],
+      colsProducts: [
+        {
+          name: 'productCode',
+          required: true,
+          label: 'Código',
+          align: 'left',
+          field: row => row.productCode,
+          format: val => `${val}`,
+          sortable: true
+        },
+        { name: 'productName'  ,align: 'left', label: 'Descrição'       ,field: 'productName'  ,sortable: true },
+        { name: 'quantity'     ,align: 'left', label: 'Quantidade'      ,field: 'quantity'     ,sortable: true },
+        { name: 'unValue'      ,align: 'left', label: 'Valor Unitário'  ,field: 'unValue'      ,sortable: true },
+      ],
       visibleCols: [
         'orderCode', 'branch', 'clientC', 'clientL',
         'valueTTL', 'issueDate', 'issueHour'
+      ],
+      visibleColsDetail: [
+        'orderCode', 'clientC', 'clientL',
+        'valueTTL', 'issueDate', 'issueHour', 'fantasy'
       ]
     }
   },
@@ -144,12 +212,33 @@ export default {
           branch: order.branchCode,
           clientC: order.clientCode,
           clientL: order.clientStore,
+          fantasy: order.fantasyName,
           valueTTL: order.amount,
           orderCode: order.orderCode,
           issueDate: stringToDate(order.issueDate),
-          issueHour: order.issueHour
+          issueHour: order.issueHour,
+          products: order.products,
+          erroBLOB: order.erroBLOB
         }
       })
+    },
+    detailOrder() {
+      let products = [];
+      for (let e = 0; e < this.rowsError.length; e++) {
+        if (this.rowsError[e].id == this.rowSelected.id) {
+          products.push({ ...this.rowsError[e].products })
+        }
+      }
+
+      var temp = [];
+      temp = Object.entries(products[0]);
+
+      var prod = [];
+      for (let i = 0; i < temp.length; i++) {
+        prod.push(temp[i][1])
+      }
+
+      return prod;
     }
   },
   methods: {
@@ -167,9 +256,6 @@ export default {
     onErrorsClick(event, row) {
       this.rowSelected = row;
       this.dErrors = true;
-
-      // Verificar como será o arquivo BLOB,vai subir na mesma Collection ou
-      // criaremos outra amarrando pelo número do pedido?
     },
     closedError() {
       this.dErrors = false;

@@ -1,6 +1,6 @@
 export default function formatDate(date) {
 
-  var day = String(date).substring(7, 8)
+  var day = String(date).substring(6, 8)
   var month = String(date).substring(5, 6)
   var year = String(date).substring(0, 4)
 

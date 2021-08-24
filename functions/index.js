@@ -40,7 +40,7 @@ const authenticate = (req, res, next) => {
 app.use(cors())
 app.use(authenticate)
 
-app.post("/collection", async(req, res) => {
+app.post("/:collection", async(req, res) => {
   const coll = req.params.collection
   const body = req.body
   const created_at = firebase.firestore.Timestamp.fromDate(new Date())
