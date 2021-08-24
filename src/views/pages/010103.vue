@@ -38,6 +38,9 @@
       </div>
     </div>
 
+    <div class="text-subtitle2 q-mt-md">
+      Selecione o pedido para detalhamento do erro:
+    </div>
     <!-- Table -->
     <div class="table">
       <DataTable
