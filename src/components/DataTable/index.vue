@@ -10,11 +10,8 @@
     :rows-per-page-options="rows-per-page-options"
     :v-model:selected="v-model"
     :flat="flat"
-    :hide-header="hide-header"
-    :hide-pagination="hide-pagination"
-    no-data-label="Sem dados para serem exibidos..."
+    :no-data-label="no-data-label"
   >
-  
     <template v-slot:top-right>
       <q-input borderless dense debounce="300" v-model="filter" placeholder="Pesquisar">
         <template v-slot:append>
@@ -29,9 +26,9 @@
 export default {
   data() {
     return {
-      filter: null,
+      filter: null
     }
-  },
+  }
 }
 </script>
 
