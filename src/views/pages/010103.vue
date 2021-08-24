@@ -47,9 +47,9 @@
         dense
         :rows="rowsError"
         :columns="colsError"
-        :filter="filterError"
         :rows-per-page-options="[10]"
         :visible-columns="visibleCols"
+        no-data-label="Sem dados para serem exibidos..."
         row-key="orderCode"
         color="negative"
         v-model="selected"
@@ -57,7 +57,7 @@
       />
     </div>
 
-    <q-dialog v-model="dErrors" full-width >
+    <q-dialog v-model="dErrors" full-width style="overflow: none;">
       <div class="bg-white q-ma-xl q-pa-md col justify-center">
         <div class="col">
           <q-scroll-area style="width: 100%; height: 480px;">
@@ -73,6 +73,7 @@
               :columns="colsDetail"
               :rows-per-page-options="[5]"
               :visible-columns="visibleColsDetail"
+              no-data-label="Sem dados para serem exibidos..."
               dense
               flat
               hide-pagination
@@ -82,10 +83,12 @@
 
             <!-- Dados sobre os produtos -->
             <div class="text-subtitle2 q-mt-md">Detalhes dos Produtos:</div>
-            <q-table
+            <DataTable
               :rows="detailOrder"
               :columns="colsProducts"
               :rows-per-page-options="[3]"
+              :visible-columns="visibleColsProd"
+              no-data-label="Sem dados para serem exibidos..."
               color="negative"
               dense
               flat
@@ -97,7 +100,7 @@
             </div>
           </q-scroll-area>
         </div>
-        <div class="row justify-center q-mt-xs">
+        <div class="row justify-center q-mt-md">
           <q-btn
             class="q-ml-md q-px-lg"
             label="Solicitar Reimportação"
@@ -155,7 +158,6 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'id'        ,align: 'left', label: 'ID'           ,field: 'id'        ,sortable: false},
         { name: 'branch'    ,align: 'left', label: 'Filial'       ,field: 'branch'    ,sortable: true },
         { name: 'clientC'   ,align: 'left', label: 'Código'       ,field: 'clientC'   ,sortable: true },
         { name: 'clientL'   ,align: 'left', label: 'Loja'         ,field: 'clientL'   ,sortable: true },
@@ -201,7 +203,10 @@ export default {
       visibleColsDetail: [
         'orderCode', 'clientC', 'clientL',
         'valueTTL', 'issueDate', 'issueHour', 'fantasy'
-      ]
+      ],
+      visibleColsProd: [
+        'productCode', 'productName', 'quantity', 'unValue'
+      ],
     }
   },
   computed: {
