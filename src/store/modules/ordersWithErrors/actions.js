@@ -8,6 +8,44 @@ const db = firebase.firestore();
 
 export async function getOrders({ commit }, infos) {
   const branchCode = infos.branchCode;
+
+  await auth();
+
+  try {
+    commit("shared/setLoadingMessage", "Atualizando Pedidos com Erros", {
+      root: true
+    });
+
+    const orders = [];
+    const snapshot = await db
+      .collection('ordersWithErrors')
+      .where('branchCode', '==', branchCode)
+      .where('status', '==', 'PENDENTE')
+      .get()
+
+    snapshot.forEach(doc => {
+      orders.push({ ...doc.data(), id: doc.id });
+    });
+
+    commit('setOrders', orders);
+    commit('shared/setLoadingMessage', null, { root: true });
+  } catch (er) {
+    console.error(er);
+    commit('shared/setLoadingMessage', null, { root: true });
+
+    commit(
+      'shared/setNotification',
+      {
+        message: 'Falha ao buscar Pedidos com erro.',
+        color: 'red',
+        position: 'top'
+      },
+      { root: true }
+    );
+  }
+}
+export async function getOrdersByDate({ commit }, infos) {
+  const branchCode = infos.branchCode;
   const issueDate = infos.date;
 
   await auth();
