@@ -127,7 +127,7 @@
 import { ref } from 'vue'
 import DataTable from '../../components/DataTable'
 import locale from 'quasar/lang/pt-BR'
-import formatDate from '../../helpers/formatDate'
+// import formatDate from '../../helpers/formatDate'
 import dateToString from '../../helpers/dateToString'
 import stringToDate from '../../helpers/stringToDate'
 import breakLine from '../../helpers/breakLine'
@@ -148,7 +148,7 @@ export default {
       dErrors: false,
       filterError: null,
       ptBR: locale.date,
-      reportDate: formatDate(Date.now()),
+      reportDate: "", // formatDate(Date.now()),
       colsError: [
         {
           name: 'orderCode',
@@ -215,6 +215,8 @@ export default {
     rowsError() {
       let orders = this.orders
 
+      orders.sort((a, b) => b.issueDate - a.issueDate);
+
       return orders.map(order => {
         return {
           id: order.id,
@@ -253,14 +255,24 @@ export default {
   methods: {
     ...mapActions("ordersWithErrors", [
       "getOrders",
+      "getOrdersByDate",
       "errorFinished"
     ]),
     ...mapMutations("shared", ["setNotification"]),
-    refreshDate() {
+    async refreshDate() {
       const date = dateToString(this.reportDate);
       const branchCode = String(this.$route.path).substr(1);
       
-      this.getOrders({ branchCode, date });
+      if(this.reportDate.length != 10 && this.reportDate.length != "") {
+        return alert("Erro ao informar a data... Favor rever preenchimento do campo");
+      }
+
+      if(this.reportDate) {
+        await this.getOrdersByDate({ branchCode, date });
+      } else {
+        await this.getOrders({ branchCode });
+      }
+
     },
     onErrorsClick(event, row) {
       this.rowSelected = row;
@@ -310,10 +322,9 @@ export default {
     }
   },
   async created() {
-    const date = dateToString(this.reportDate);
     const branchCode = String(this.$route.path).substr(1);
 
-    await this.getOrders({ branchCode, date });
+    await this.getOrders({ branchCode });
   }
 }
 </script>
