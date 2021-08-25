@@ -53,12 +53,12 @@ const routes = [
   },
 
 
-  // // Always leave this as last one,
-  // // but you can also remove it
-  // {
-  //   path: "*",
-  //   component: () => import("../views/Erro404.vue")
-  // }
+  // Always leave this as last one,
+  // but you can also remove it
+  {
+    path: "/erro404",
+    component: () => import("../views/Erro404.vue")
+  }
 ]
 
 const router = createRouter({
