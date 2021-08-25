@@ -94,9 +94,9 @@
               flat
             />
 
-            <div class="text-subtitle2 q-mt-md">Mensagem de Erro:</div>
-            <div class="erroBLOB">
-              {{ rowSelected.erroBLOB }}
+            <div class="text-subtitle2 q-my-md">Mensagem de Erro:</div>
+            <div v-for="err in rowSelected.erroBLOB" :key="err">
+              <p class="erroBLOB">{{ err }}</p>
             </div>
           </q-scroll-area>
         </div>
@@ -130,6 +130,7 @@ import locale from 'quasar/lang/pt-BR'
 import formatDate from '../../helpers/formatDate'
 import dateToString from '../../helpers/dateToString'
 import stringToDate from '../../helpers/stringToDate'
+import breakLine from '../../helpers/breakLine'
 import { mapActions, mapMutations, mapState } from 'vuex'
 
 export default {
@@ -226,7 +227,7 @@ export default {
           issueDate: stringToDate(order.issueDate),
           issueHour: order.issueHour,
           products: order.products,
-          erroBLOB: order.erroBLOB
+          erroBLOB: breakLine(order.erroBLOB)
         }
       })
     },
@@ -316,3 +317,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .erroBLOB {
+    line-height: 7px;
+  }
+</style>
