@@ -1,8 +1,16 @@
-export default function strDate(date) {
+export default function formatDate(date) {
 
-  let day = date.substring(0, 2)
-  let month = date.substring(3, 5)
-  let year = date.substring(6, 10)
+  var day = String(date).substring(6, 8)
+  var month = String(date).substring(5, 6)
+  var year = String(date).substring(0, 4)
 
-  return year + month + day;
+  if (day.length < 2) {
+    day = "0" + day
+  }
+  if (month.length < 2) {
+    month = "0" + month
+  }
+
+  return [ day, month, year].join('/');
+
 }
