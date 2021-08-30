@@ -60,9 +60,9 @@ export default {
           icon: 'filter_1',
           children: [
             {code: '010101' ,label: 'Cicopal Matriz'      ,icon: 'looks_one'},
-            {code: '010103' ,label: 'Cicopal Uberlândia'  ,icon: 'looks_one'},
             {code: '010105' ,label: 'Cicopal Marabá'      ,icon: 'looks_one'},
             {code: '010201' ,label: 'Snacks Matriz'       ,icon: 'looks_one'},
+            {code: '010203' ,label: 'Snacks Uberlândia'   ,icon: 'looks_one'},
             {code: '010401' ,label: 'Carper Matriz'       ,icon: 'looks_one'},
           ]
         },

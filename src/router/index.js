@@ -28,7 +28,7 @@ const routes = [
       {
         path: '010203',
         name: 'Snacks Uberlândia',
-        component: () => import('../views/pages/010103.vue')
+        component: () => import('../views/pages/010203.vue')
       },
       {
         path: '010401',
