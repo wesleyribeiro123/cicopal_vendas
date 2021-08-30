@@ -1,10 +1,10 @@
 import { createStore } from 'vuex'
 import shared from './modules/shared'
-import ordersWithErrors from './modules/ordersWithErrors'
+import forms from './modules/forms'
 
 const modules = {
   shared,
-  ordersWithErrors
+  forms
 }
 
 export default createStore({

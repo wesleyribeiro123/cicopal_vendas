@@ -2,13 +2,12 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAbj_6HCK3INAJJTyUhLVt3nXmOxASM5pA",
-  authDomain: "cicopal-vendas.firebaseapp.com",
-  projectId: "cicopal-vendas",
-  storageBucket: "cicopal-vendas.appspot.com",
-  messagingSenderId: "645937206136",
-  appId: "1:645937206136:web:15d29288b98c261b9f2e8d",
-  measurementId: "G-QLN5V8NRJH"
+  apiKey: "AIzaSyBc_IJw94aJIfLhcsJrKij5F0QrhZ8vx5g",
+  authDomain: "cicopal-paradas-producao.firebaseapp.com",
+  projectId: "cicopal-paradas-producao",
+  storageBucket: "cicopal-paradas-producao.appspot.com",
+  messagingSenderId: "704341606719",
+  appId: "1:704341606719:web:be2f9cb55f77588def938a"
 };
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
